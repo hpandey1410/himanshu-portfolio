@@ -37,7 +37,7 @@
       --r-sm: 10px;
     }
 
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; overflow-x: clip; }
 
     body {
       font-family: 'Manrope', system-ui, sans-serif;
@@ -45,7 +45,7 @@
       color: var(--text);
       line-height: 1.75;
       letter-spacing: -0.005em;
-      overflow-x: hidden;
+      overflow-x: clip;
       -webkit-font-smoothing: antialiased;
       text-rendering: optimizeLegibility;
     }
@@ -167,8 +167,27 @@
       overflow: hidden;
       padding: 120px 6% 90px;
     }
+    /* Cinematic video banner behind the hero headline */
+    .hero-video {
+      position: absolute; inset: 0; z-index: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 1;
+      filter: saturate(1.05) contrast(1.02);
+      pointer-events: none;
+    }
+    /* Section kept transparent so the video (eyes) shows through;
+       only a soft top + bottom fade for the navbar and section blend */
+    .hero-scrim {
+      position: absolute; inset: 0; z-index: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(180deg, rgba(12,10,9,0.20) 0%, transparent 20%, transparent 66%, rgba(12,10,9,0.55) 86%, rgba(12,10,9,0.95) 100%);
+    }
+    /* keep the headline crisp over the now-visible video */
+    .hero-content { text-shadow: 0 2px 18px rgba(0,0,0,0.85), 0 1px 6px rgba(0,0,0,0.7); }
     .hero-bg {
-      position: absolute; inset: 0;
+      position: absolute; inset: 0; z-index: 0;
       background:
         radial-gradient(ellipse 70% 55% at 50% -5%, rgba(201,162,75,0.20) 0%, transparent 65%),
         radial-gradient(ellipse 50% 45% at 82% 88%, rgba(231,200,127,0.08) 0%, transparent 60%),
@@ -391,6 +410,145 @@
       background: linear-gradient(90deg, var(--gold-deep), var(--gold-bright));
       width: 0;
       transition: width 1.4s cubic-bezier(0.4,0,0.2,1);
+    }
+
+    /* ---------- SERVICES ---------- */
+    #services { background: var(--bg); border-top: 1px solid var(--line); }
+    .services-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 22px; }
+    @media (min-width: 1100px) { .services-grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 600px)  { .services-grid { grid-template-columns: 1fr; } }
+    .service-card {
+      position: relative;
+      background: var(--surface);
+      border: 1px solid var(--line);
+      border-radius: var(--r-md);
+      padding: 38px 30px 32px;
+      overflow: hidden;
+      transition: transform 0.4s ease, box-shadow 0.4s ease, border-color 0.4s ease;
+    }
+    .service-card:hover { transform: translateY(-7px); box-shadow: var(--shadow); border-color: var(--line-warm); }
+    .service-card::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, var(--gold-bright), var(--gold-deep), transparent);
+      transform: scaleX(0); transform-origin: left;
+      transition: transform 0.5s cubic-bezier(.22,.61,.36,1);
+    }
+    .service-card:hover::before { transform: scaleX(1); }
+    .service-index {
+      position: absolute; top: 26px; right: 28px; z-index: 2;
+      font-family: 'Fraunces', serif; font-style: italic;
+      font-size: 1.55rem; color: var(--muted-2);
+      opacity: 0.45; transition: color 0.4s ease, opacity 0.4s ease;
+    }
+    .service-card:hover .service-index { color: var(--gold); opacity: 0.95; }
+    .service-icon {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 56px; height: 56px; margin-bottom: 24px;
+      border-radius: 14px;
+      background: var(--gold-soft); border: 1px solid var(--gold-line);
+      transition: transform 0.4s ease, background 0.4s ease;
+    }
+    .service-card:hover .service-icon { transform: translateY(-2px) scale(1.05); }
+    .service-icon svg { width: 26px; height: 26px; stroke: var(--gold-bright); }
+    .service-card h3 { font-family: 'Fraunces', serif; font-weight: 500; font-size: 1.4rem; letter-spacing: -0.01em; margin-bottom: 12px; }
+    .service-card p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; margin-bottom: 22px; }
+    .service-tags { display: flex; flex-wrap: wrap; gap: 8px; position: relative; z-index: 2; }
+    .service-tags span {
+      font-size: 0.72rem; font-weight: 500; letter-spacing: 0.02em;
+      color: var(--gold-bright);
+      background: transparent; border: 1px solid var(--line-warm);
+      border-radius: 50px; padding: 4px 13px;
+    }
+
+    /* ---------- SCROLL SHOWCASE (3D scroll-reveal card) ---------- */
+    #showcase { background: var(--bg); border-top: 1px solid var(--line); padding: 0 6%; overflow: hidden; }
+    .scroll-stage {
+      height: 78rem;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+      perspective: 1000px;
+    }
+    .scroll-inner { width: 100%; }
+    .scroll-header {
+      max-width: 62rem; margin: 0 auto 0; text-align: center;
+      will-change: transform;
+    }
+    .scroll-header .section-tag { justify-content: center; }
+    .scroll-header h2 {
+      font-family: 'Fraunces', serif; font-weight: 500;
+      font-size: clamp(1.9rem, 4vw, 2.8rem); line-height: 1.1; letter-spacing: -0.02em;
+    }
+    .scroll-header h2 .big {
+      display: block; margin-top: 6px;
+      font-style: italic; font-weight: 600;
+      font-size: clamp(2.8rem, 8vw, 6rem); line-height: 1;
+      background: linear-gradient(115deg, var(--gold-bright), var(--gold), var(--gold-deep));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .scroll-card {
+      max-width: 62rem; height: 40rem; width: 100%;
+      margin: -2.5rem auto 0;
+      border: 4px solid rgba(201,162,75,0.30);
+      padding: 1.4rem; background: #15110d; border-radius: 30px;
+      box-shadow: 0 0 #0000004d, 0 9px 20px #0000004a, 0 37px 37px #00000042,
+                  0 84px 50px #00000026, 0 149px 60px #0000000a, 0 233px 65px #00000003;
+      transform: rotateX(20deg) scale(1.05);
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .scroll-card-screen {
+      height: 100%; width: 100%; overflow: hidden;
+      border-radius: 18px; background: #0c0a09;
+      display: flex; flex-direction: column;
+    }
+    /* on-brand article-preview mockup inside the card */
+    .mock-top {
+      display: flex; align-items: center; gap: 7px;
+      padding: 14px 18px; border-bottom: 1px solid var(--line);
+      background: #110e0b; flex-shrink: 0;
+    }
+    .mock-dot { width: 11px; height: 11px; border-radius: 50%; background: #3a352e; }
+    .mock-dot:nth-child(2) { background: #4a443a; }
+    .mock-dot:nth-child(3) { background: var(--gold-deep); }
+    .mock-addr {
+      margin-left: 14px; flex: 1;
+      font-size: 0.74rem; color: var(--muted-2); letter-spacing: 0.02em;
+      background: #0c0a09; border: 1px solid var(--line);
+      padding: 6px 14px; border-radius: 50px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .mock-doc { padding: 34px clamp(20px,5%,56px); overflow: hidden; }
+    .mock-badge {
+      display: inline-block; color: var(--gold); border: 1px solid var(--gold-line);
+      font-size: 0.66rem; font-weight: 700; letter-spacing: 0.14em;
+      padding: 4px 13px; border-radius: 50px; margin-bottom: 18px;
+    }
+    .mock-title {
+      font-family: 'Fraunces', serif; font-weight: 500;
+      font-size: clamp(1.4rem, 3.2vw, 2.3rem); line-height: 1.18; letter-spacing: -0.01em;
+      margin-bottom: 12px;
+    }
+    .mock-title em { color: var(--gold-bright); font-style: italic; }
+    .mock-meta { color: var(--muted-2); font-size: 0.82rem; margin-bottom: 22px; }
+    .mock-p { color: var(--muted); font-size: 0.95rem; line-height: 1.8; margin-bottom: 16px; }
+    .mock-pull {
+      border-left: 2px solid var(--gold); padding: 6px 0 6px 20px; margin: 6px 0 18px;
+      font-family: 'Fraunces', serif; font-style: italic; font-size: 1.05rem;
+      color: var(--text); line-height: 1.5;
+    }
+    .mock-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+    .mock-tags span {
+      font-size: 0.72rem; color: var(--gold-bright);
+      border: 1px solid var(--line-warm); border-radius: 50px; padding: 4px 12px;
+    }
+    @media (max-width: 768px) {
+      .scroll-stage { height: 58rem; }
+      .scroll-card { height: 28rem; padding: 0.7rem; transform: rotateX(20deg) scale(0.7); }
+      .mock-doc { padding: 22px 22px; }
+      .mock-p:nth-of-type(2) { display: none; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .scroll-card { transform: rotateX(0deg) scale(1); }
+      .scroll-header, .scroll-card { transition: none; }
     }
 
     /* ---------- EXPERIENCE ---------- */
@@ -724,7 +882,7 @@
       transform: perspective(1200px) rotateX(0deg) translateY(0);
     }
 
-    .about-card, .skill-card, .sample-card, .cert-card, .brand-card, .timeline-item {
+    .about-card, .skill-card, .service-card, .sample-card, .cert-card, .brand-card, .timeline-item {
       position: relative;
       transform-style: preserve-3d;
     }
@@ -762,6 +920,7 @@
       .card-sheen { display: none; }
       .hero-grid { transform: rotateX(62deg) scale(1.7); }
       .hero-bg, .hero-content { transform: none !important; }
+      .hero-video { display: none; }
     }
   </style>
 </head>
@@ -771,7 +930,7 @@
   <div class="nav-logo">HP.</div>
   <ul class="nav-links" id="primary-nav">
     <li><a href="#about">About</a></li>
-    <li><a href="#skills">Skills</a></li>
+    <li><a href="#services">Services</a></li>
     <li><a href="#experience">Experience</a></li>
     <li><a href="#brands">Brands</a></li>
     <li><a href="#samples">Writing Samples</a></li>
@@ -784,10 +943,14 @@
 </nav>
 
 <section class="hero">
+  <video class="hero-video" autoplay muted loop playsinline preload="auto" aria-hidden="true" tabindex="-1">
+    <source src="hero-bg.mp4" type="video/mp4" />
+  </video>
+  <div class="hero-scrim"></div>
   <div class="hero-bg"></div>
   <div class="hero-grid"></div>
-  <div class="shape" style="width:400px;height:400px;background:rgba(108,99,255,0.12);top:-100px;left:-100px;animation-delay:0s"></div>
-  <div class="shape" style="width:300px;height:300px;background:rgba(255,101,132,0.1);bottom:50px;right:-50px;animation-delay:3s"></div>
+  <div class="shape" style="width:400px;height:400px;background:rgba(201,162,75,0.10);top:-100px;left:-100px;animation-delay:0s"></div>
+  <div class="shape" style="width:300px;height:300px;background:rgba(231,200,127,0.08);bottom:50px;right:-50px;animation-delay:3s"></div>
 
   <div class="hero-content">
     <div class="hero-badge"><span></span> Available for Freelance Projects</div>
@@ -865,49 +1028,69 @@
   </div>
 </section>
 
-<section id="skills">
+<section id="services">
   <div class="section-inner">
     <div class="reveal">
-      <div class="section-tag">What I Do</div>
-      <h2 class="section-title">Skills &amp; <span>Expertise</span></h2>
-      <p class="section-desc">A well-rounded content professional with hands-on expertise across the digital marketing spectrum.</p>
+      <div class="section-tag">What I Offer</div>
+      <h2 class="section-title">Services I <span>Provide</span></h2>
+      <p class="section-desc">A full content-to-launch toolkit — from the first researched word to a live website and the videos that carry it across feeds.</p>
     </div>
-    <div class="skills-grid reveal">
-      <div class="skill-card">
-        <div class="skill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.5" y2="16.5"/></svg></div>
-        <h3>Search Engine Optimisation</h3>
-        <p>Keyword research, on-page SEO, content clustering, meta optimisation — writing content that ranks.</p>
-        <div class="skill-bar-bg"><div class="skill-bar" data-width="92"></div></div>
+    <div class="services-grid reveal">
+      <div class="service-card">
+        <span class="service-index">01</span>
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.2 12.2a6 6 0 0 0-8.5-8.5L5 10.5V19h8.5z"/><path d="M16 8 2 22"/><path d="M17.5 15H9"/></svg></div>
+        <h3>Content Writing</h3>
+        <p>SEO-optimised blogs, website copy, product descriptions, and brand storytelling — written to rank on Google and turn readers into customers.</p>
+        <div class="service-tags"><span>SEO Blogs</span><span>Website Copy</span><span>Product Descriptions</span><span>Ad Copy (Meta &amp; Google)</span></div>
       </div>
-      <div class="skill-card">
-        <div class="skill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg></div>
-        <h3>Web Content Writing</h3>
-        <p>Long-form blogs, landing pages, product descriptions, and website copy tailored for conversion.</p>
-        <div class="skill-bar-bg"><div class="skill-bar" data-width="95"></div></div>
+      <div class="service-card">
+        <span class="service-index">02</span>
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7"/><path d="M14 3v5h5"/><circle cx="16.5" cy="16.5" r="2.8"/><path d="m21 21-1.9-1.9"/></svg></div>
+        <h3>Research &amp; Strategy</h3>
+        <p>Deep topic research, keyword mapping, and content strategy built on real data and audience insight — so every piece you publish has a clear purpose.</p>
+        <div class="service-tags"><span>Keyword Research</span><span>On-Page SEO</span><span>Topic Analysis</span><span>Content Strategy</span></div>
       </div>
-      <div class="skill-card">
-        <div class="skill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg></div>
-        <h3>Social Media Content</h3>
-        <p>Instagram captions, LinkedIn posts, YouTube scripts, and platform-specific storytelling.</p>
-        <div class="skill-bar-bg"><div class="skill-bar" data-width="88"></div></div>
+      <div class="service-card">
+        <span class="service-index">03</span>
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+        <h3>Websites &amp; Deployment</h3>
+        <p>From landing pages to full portfolios — I design, build, and deploy fast, responsive websites that go live and start performing, end to end.</p>
+        <div class="service-tags"><span>Responsive Design</span><span>WordPress</span><span>Landing Pages</span><span>Live Deployment</span></div>
       </div>
-      <div class="skill-card">
-        <div class="skill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M16 8a4 4 0 0 1 0 8"/><path d="M19 5a8 8 0 0 1 0 14"/></svg></div>
-        <h3>Meta &amp; Google Ads</h3>
-        <p>Ad copy, performance creatives, and campaign messaging for Facebook, Instagram, and Google.</p>
-        <div class="skill-bar-bg"><div class="skill-bar" data-width="80"></div></div>
+      <div class="service-card">
+        <span class="service-index">04</span>
+        <div class="service-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="13" height="12" rx="2"/><path d="m15 10 6-4v12l-6-4z"/></svg></div>
+        <h3>UGC Video Creation</h3>
+        <p>Authentic, scroll-stopping user-generated-style videos and short-form content that build trust and drive engagement across Instagram, YouTube &amp; more.</p>
+        <div class="service-tags"><span>Short-Form Video</span><span>Social Media Content</span><span>Canva Design</span><span>Product Demos</span></div>
       </div>
-      <div class="skill-card">
-        <div class="skill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18 14 14 0 0 1 0-18z"/></svg></div>
-        <h3>WordPress</h3>
-        <p>Content publishing, basic on-site SEO configuration, formatting, and plugin-level optimisation.</p>
-        <div class="skill-bar-bg"><div class="skill-bar" data-width="85"></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="showcase">
+  <div class="scroll-stage">
+    <div class="scroll-inner">
+      <div class="scroll-header">
+        <div class="section-tag">From Brief to Published</div>
+        <h2>Words that move<span class="big">the needle</span></h2>
       </div>
-      <div class="skill-card">
-        <div class="skill-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a9 9 0 0 0 0 18c1 0 1.7-.8 1.7-1.8 0-.5-.2-.9-.5-1.2-.3-.3-.5-.7-.5-1.2 0-1 .8-1.8 1.8-1.8H16a5 5 0 0 0 5-5c0-4.4-4-7-9-7z"/><circle cx="7.5" cy="11.5" r="1"/><circle cx="11" cy="7.5" r="1"/><circle cx="15.5" cy="8.5" r="1"/></svg></div>
-        <h3>Canva Design</h3>
-        <p>Social media graphics, blog banners, pitch decks, and brand visuals using Canva Pro.</p>
-        <div class="skill-bar-bg"><div class="skill-bar" data-width="78"></div></div>
+      <div class="scroll-card">
+        <div class="scroll-card-screen">
+          <div class="mock-top">
+            <span class="mock-dot"></span><span class="mock-dot"></span><span class="mock-dot"></span>
+            <div class="mock-addr">himanshupandey.work / blog / seo-content-that-converts</div>
+          </div>
+          <div class="mock-doc">
+            <span class="mock-badge">SEO BLOG · 6 MIN READ</span>
+            <h3 class="mock-title">How to Write Content That Ranks <em>and</em> Converts</h3>
+            <p class="mock-meta">By Himanshu Pandey · Updated June 2026</p>
+            <p class="mock-p">Great content does two jobs at once — it earns the click from Google and the trust of the reader who arrives. The best pieces never make you choose between the two.</p>
+            <p class="mock-p">Start with search intent, structure for skim-readers, and let every paragraph carry its keyword naturally. Strategy and storytelling, working together.</p>
+            <div class="mock-pull">"Write for the reader first — the algorithm rewards what people actually finish."</div>
+            <div class="mock-tags"><span>Keyword Research</span><span>On-Page SEO</span><span>Internal Linking</span><span>Conversion Copy</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1216,7 +1399,7 @@
 
     /* --- Tilt every card toward the cursor, with a tracking sheen --- */
     var MAX = 7; // max tilt in degrees
-    var cards = document.querySelectorAll('.about-card, .skill-card, .sample-card, .cert-card, .brand-card, .timeline-item');
+    var cards = document.querySelectorAll('.about-card, .skill-card, .service-card, .sample-card, .cert-card, .brand-card, .timeline-item');
     cards.forEach(function (card) {
       card.classList.add('tilt-3d');
       var sheen = document.createElement('span');
@@ -1277,6 +1460,63 @@
         if (grid) { grid.style.setProperty('--gx', '0px'); grid.style.setProperty('--gy', '0px'); }
       });
     }
+  })();
+</script>
+
+<script>
+  /* Ensure the hero background video autoplays across browsers */
+  (function () {
+    var v = document.querySelector('.hero-video');
+    if (!v) return;
+    v.muted = true; v.defaultMuted = true;
+    v.setAttribute('muted', '');
+    var tryPlay = function () {
+      var p = v.play();
+      if (p && p.catch) p.catch(function () {});
+    };
+    tryPlay();
+    v.addEventListener('loadeddata', tryPlay);
+    v.addEventListener('canplay', tryPlay);
+    document.addEventListener('visibilitychange', function () {
+      if (!document.hidden) tryPlay();
+    });
+    ['pointerdown', 'touchstart', 'scroll', 'keydown'].forEach(function (evt) {
+      window.addEventListener(evt, tryPlay, { once: true, passive: true });
+    });
+  })();
+</script>
+
+<script>
+  /* Scroll-reveal 3D card — vanilla port of framer-motion useScroll/useTransform.
+     Maps scroll progress through the section to: card rotateX 20deg->0,
+     scale 1.05->1 (0.7->0.9 on mobile), and header translateY 0->-100px. */
+  (function () {
+    var stage  = document.querySelector('#showcase .scroll-stage');
+    if (!stage) return;
+    var header = stage.querySelector('.scroll-header');
+    var card   = stage.querySelector('.scroll-card');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      card.style.transform = 'rotateX(0deg) scale(1)';
+      return;
+    }
+    var clamp = function (v) { return v < 0 ? 0 : v > 1 ? 1 : v; };
+    var ticking = false;
+    function update() {
+      ticking = false;
+      var rect = stage.getBoundingClientRect();
+      var total = rect.height - window.innerHeight;          // distance scrolled through the stage
+      var p = total > 0 ? clamp(-rect.top / total) : 0;      // 0 at start-start, 1 at end-end
+      var mobile = window.innerWidth <= 768;
+      var rotate = 20 - 20 * p;                              // 20deg -> 0deg
+      var sFrom  = mobile ? 0.7 : 1.05, sTo = mobile ? 0.9 : 1;
+      var scale  = sFrom + (sTo - sFrom) * p;                // scale ramp
+      card.style.transform   = 'rotateX(' + rotate + 'deg) scale(' + scale + ')';
+      header.style.transform = 'translateY(' + (-100 * p) + 'px)';
+    }
+    function onScroll() { if (!ticking) { ticking = true; requestAnimationFrame(update); } }
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    update();
   })();
 </script>
 </body>
